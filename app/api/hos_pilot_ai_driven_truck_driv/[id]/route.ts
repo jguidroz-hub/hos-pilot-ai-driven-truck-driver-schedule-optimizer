@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { hosPilotAiDrivenTruckDriv } from '@/lib/domain-schema';
+import { hosPilotAiDrivenTruckDrivItems } from '@/lib/domain-schema';
 import { eq, and } from 'drizzle-orm';
 
 export const runtime = 'nodejs';
@@ -11,8 +11,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { id } = await params;
 
-  const [item] = await db.select().from(hosPilotAiDrivenTruckDriv)
-    .where(and(eq(hosPilotAiDrivenTruckDriv.id, id), eq(hosPilotAiDrivenTruckDriv.userId, session.user.id)))
+  const [item] = await db.select().from(hosPilotAiDrivenTruckDrivItems)
+    .where(and(eq(hosPilotAiDrivenTruckDrivItems.id, id), eq(hosPilotAiDrivenTruckDrivItems.userId, session.user.id)))
     .limit(1);
 
   if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -25,9 +25,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const body = await req.json();
 
-  const [updated] = await db.update(hosPilotAiDrivenTruckDriv)
+  const [updated] = await db.update(hosPilotAiDrivenTruckDrivItems)
     .set({ ...body, updatedAt: new Date() })
-    .where(and(eq(hosPilotAiDrivenTruckDriv.id, id), eq(hosPilotAiDrivenTruckDriv.userId, session.user.id)))
+    .where(and(eq(hosPilotAiDrivenTruckDrivItems.id, id), eq(hosPilotAiDrivenTruckDrivItems.userId, session.user.id)))
     .returning();
 
   if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -39,8 +39,8 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { id } = await params;
 
-  await db.delete(hosPilotAiDrivenTruckDriv)
-    .where(and(eq(hosPilotAiDrivenTruckDriv.id, id), eq(hosPilotAiDrivenTruckDriv.userId, session.user.id)));
+  await db.delete(hosPilotAiDrivenTruckDrivItems)
+    .where(and(eq(hosPilotAiDrivenTruckDrivItems.id, id), eq(hosPilotAiDrivenTruckDrivItems.userId, session.user.id)));
 
   return NextResponse.json({ success: true });
 }
